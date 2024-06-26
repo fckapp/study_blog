@@ -1,7 +1,4 @@
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
-
-def precision_recall_curve_plot(y_test , pred_proba_c1):
+def precision_recall_curve_plot(y_test=None, pred_proba_c1=None):
     # threshold ndarray와 이 threshold에 따른 정밀도, 재현율 ndarray 추출. 
     precisions, recalls, thresholds = precision_recall_curve( y_test, pred_proba_c1)
     
@@ -21,6 +18,7 @@ def precision_recall_curve_plot(y_test , pred_proba_c1):
     plt.show()
 
 
+# 수정된 get_clf_eval() 함수 
 def get_clf_eval(y_test, pred=None, pred_proba=None):
     confusion = confusion_matrix( y_test, pred)
     accuracy = accuracy_score(y_test , pred)
@@ -33,16 +31,16 @@ def get_clf_eval(y_test, pred=None, pred_proba=None):
     print(confusion)
     # ROC-AUC print 추가
     print('정확도: {0:.4f}, 정밀도: {1:.4f}, 재현율: {2:.4f},\
-          F1: {3:.4f}, AUC:{4:.4f}'.format(accuracy, precision, recall, f1, roc_auc))
+    F1: {3:.4f}, AUC:{4:.4f}'.format(accuracy, precision, recall, f1, roc_auc))
 
 
 # 테스트를 수행할 모든 임곗값을 리스트 객체로 저장. 
-thresholds = [0.4, 0.45, 0.50, 0.55, 0.60]
+from sklearn.preprocessing import Binarizer
 
 def get_eval_by_threshold(y_test , pred_proba_c1, thresholds):
-    # thresholds list객체내의 값을 차례로 iteration하면서 Evaluation 수행.
+    # thresholds 리스트 객체내의 값을 차례로 iteration하면서 Evaluation 수행.
     for custom_threshold in thresholds:
         binarizer = Binarizer(threshold=custom_threshold).fit(pred_proba_c1) 
         custom_predict = binarizer.transform(pred_proba_c1)
         print('임곗값:',custom_threshold)
-        get_clf_eval(y_test , custom_predict)
+        get_clf_eval(y_test , custom_predict, pred_proba_c1)
